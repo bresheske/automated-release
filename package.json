@@ -1,0 +1,35 @@
+{
+  "name": "automated-release",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "config": {
+    "bucketname": "44399-aaceef-myapp-releases",
+    "region": "us-east-2",
+    "version": "1.0.2",
+    "user": "public-bucket-user"
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "watch": "tsc -w",
+    "start": "npm run tsc && node example/index.js",
+    "start-dist": "npm run pack && node --no-deprecation dist/index.js",
+    "create-bucket": "aws s3api create-bucket --bucket %npm_package_config_bucketname% --acl public-read --region %npm_package_config_region% --create-bucket-configuration LocationConstraint=%npm_package_config_region%",
+    "create-user": "aws iam create-user --user-name %npm_package_config_user%",
+    "pack-parcel": "npm run tsc && parcel build example/index.js",
+    "pack": "npm run tsc && webpack example/index.js -o dist/index.js --target node",
+    "deploy": "npm run pack && aws s3 cp ./dist/index.js s3://%npm_package_config_bucketname%/%npm_package_config_version%.js --acl public-read"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^10.12.18",
+    "parcel-bundler": "^1.11.0",
+    "typescript": "^3.2.4",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.391.0"
+  }
+}
